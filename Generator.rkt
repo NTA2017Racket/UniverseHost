@@ -5,15 +5,19 @@
 (require 2htdp/universe)
 
 (require "Struct.rkt")
+(require "Constants.rkt")
 
 (provide generate-planets)
 
 (define (render-planet rad col) (circle rad "solid" col))
 
+(define (generate-planet)
+    (define px (random 10 WINDOW.WIDTH))
+    (define py (random 10 WINDOW.HEIGHT))
+    (define rad (random 15 50))
+    (Planet (Position px py) rad (render-planet rad "red"))
+)
+
 (define (generate-planets num)
-    (list 
-    (Planet (Position 100 100) 20 (render-planet 20 "red"))
-    (Planet (Position 200 300) 26 (render-planet 26 "red"))
-    (Planet (Position 600 600) 30 (render-planet 30 "red"))
-    )
+    (map (lambda (n) (generate-planet)) (range num))
 )
