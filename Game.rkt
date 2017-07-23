@@ -7,6 +7,7 @@
 ; import other modules
 (require "Struct.rkt")
 (require "Constants.rkt")
+(require "Generator.rkt")
 
 (define BACKGROUND (scale/xy (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH) (/ WINDOW.HEIGHT BACKGROUNDTEXTURE.HEIGHT) BACKGROUNDTEXTURE))
 
@@ -27,7 +28,7 @@
 
 (define (update state) (GameState #false (+ (GameState-time state) 1)))
 
-(big-bang (GameState #false 0)
+(big-bang (GameState #false 0 (generate-planets 10))
     (to-draw render)
     (on-key key-press)
     (on-tick update)
