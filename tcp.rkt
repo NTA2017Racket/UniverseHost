@@ -2,6 +2,7 @@
 
 (require misc1/syntax)
 (require libuuid)
+(require "Struct.rkt")
 
 (define (handle in out)
     (display "HALLO\n" out)
