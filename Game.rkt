@@ -10,16 +10,26 @@
 
 (define BACKGROUND (scale/xy (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH) (/ WINDOW.HEIGHT BACKGROUNDTEXTURE.HEIGHT) BACKGROUNDTEXTURE))
 
-(define (render state) BACKGROUND)
+(define (render state) 
+    (place-image 
+    (text 
+    (number->string
+    (round (/
+        (exact->inexact (GameState-time state))
+     28)))
+    30 "white")
+    50 50 BACKGROUND)
+)
 
 (define (stop-game state) (exit))
 
 (define (key-press state a-key) (if (key=? a-key "escape") (stop-game state) (state)))
 
-(define (update state) state)
+(define (update state) (GameState #false (+ (GameState-time state) 1)))
 
-(big-bang (GameState #false)
+(big-bang (GameState #false 0)
     (to-draw render)
     (on-key key-press)
-    (name "Test")
+    (on-tick update)
+    (name "Universe")
 )
