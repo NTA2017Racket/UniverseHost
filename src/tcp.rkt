@@ -1,22 +1,35 @@
 #lang racket
 
-(require misc1/syntax)
+;(require misc1/syntax)
 (require libuuid)
 (require "Struct.rkt")
+(require readline)
+(require readline/readline)
+(install-readline!)
+(require racket/future)
+(require alexis/util/abbreviations)
 
+(define (loop out)
+    (display "Run loop1" (current-output-port))
+    (define UserInput (readline "> "))
+    (display (string-append UserInput "\n") out)
+    (loop out)
+)
 
+(define (loop2 id in)
+    (display "Run loop2" (current-output-port))
+    (define input (read-line in))
+    (display (string-append "UUID: " id " | " input "\n") (current-output-port))
+    (loop2 id in)
+)
 
 (define (handle in out)
     (display "HALLO\n" out)
     (define id (uuid-generate))
     (display (string-append id " connected!\n") (current-output-port))
-    (define (loop)
-        (define input (read-line in))
-        (display (string-append "UUID: " id " | " input "\n") (current-output-port))
-
-        (loop)
-    )
-    (loop)
+    (let ([f (future (lambda () (loop out)))])
+        (or (loop2 id in)
+      (touch f)))
 )
 
 (define (accept-and-handle listener)
