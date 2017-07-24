@@ -11,8 +11,17 @@
 (require "Generator.rkt")
 (require "Functions.rkt")
 
-(define BACKGROUND (scale/xy (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH) (/ WINDOW.HEIGHT BACKGROUNDTEXTURE.HEIGHT) BACKGROUNDTEXTURE))
-(define PLANETS (generate-planets 20))
+(define BACKGROUND 
+    (scale/xy 
+        (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH)
+        (/ WINDOW.HEIGHT BACKGROUNDTEXTURE.HEIGHT)
+    BACKGROUNDTEXTURE
+    )
+)
+
+(define PLANETS 
+    (generate-planets 20)
+)
 
 (define (render-counter num col)
     (text 
@@ -24,16 +33,73 @@
 
 (define (render state) 
     (place-images 
-    (append (list (render-counter (GameState-time state) "white")) (map (lambda (p) (Planet-image p)) (GameState-planets state)))
-    (append (list (make-posn 50 50)) (map (lambda (p) (convert-posn (Planet-pos p)))(GameState-planets state)))
-    BACKGROUND)
+        (append
+            (list 
+                (render-counter 
+                    (GameState-time state)
+                "white"
+                )
+            ) 
+            (map 
+                (lambda 
+                    (p) 
+                    (Planet-image p)
+                ) 
+                (GameState-planets state)
+            )
+        )
+        (append 
+            (list 
+                (make-posn 50 50)
+            ) 
+            (map 
+                (lambda 
+                    (p) 
+                    (convert-posn 
+                        (Planet-pos p)
+                    )
+                )
+                (GameState-planets state)
+            )
+        )
+    BACKGROUND
+    )
 )
 
-(define (stop-game state) (exit))
+(define (stop-game state)
+    (exit)
+)
 
-(define (key-press state a-key) (if (key=? a-key "escape") (stop-game state) (state)))
+(define 
+    (key-press state a-key)
+    (if (key=? a-key "escape")
+        (stop-game state)
+        (state)
+    )
+)
 
-(define (update state) (GameState #false (+ (GameState-time state) 1) (GameState-players state) (GameState-planets state)))
+(define (add-energy players)
+    (map 
+        (lambda 
+            (p) 
+            (+ 
+                (Player-energy p)
+            2)
+        ) 
+        players
+    )
+)
+
+(define 
+    (update state)
+    (GameState #false 
+        (+ 
+            (GameState-time state)
+        1)
+        (add-energy (GameState-players state))
+        (GameState-planets state)
+    )
+)
 
 (big-bang (GameState #false 0 (list) PLANETS)
     (to-draw render)
