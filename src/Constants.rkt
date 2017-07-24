@@ -11,6 +11,7 @@
 (define WINDOW.HEIGHT 675)
 (define WINDOW.WIDTH 1200)
 
-(define BACKGROUNDTEXTURE (bitmap/file "Background.png"))
+(define BACKGROUNDTEXTURE (bitmap/file "../assets/Background.png"))
 (define BACKGROUNDTEXTURE.WIDTH (image-width BACKGROUNDTEXTURE))
 (define BACKGROUNDTEXTURE.HEIGHT (image-height BACKGROUNDTEXTURE))
+(define PLANETTEXTURE (bitmap/file "../assets/Planet.png"))
