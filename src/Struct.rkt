@@ -8,12 +8,12 @@
 Player Player-id Player-name Player-pos Player-energy Player-color
 Vector2D Vector2D-x Vector2D-y
 Planet Planet-pos Planet-radius Planet-image
-Projectile Projectile-uuid Projectile-pos Projectile-velocity Projectile-accleration
+Projectile Projectile-uuid Projectile-pos Projectile-velocity Projectile-accleration Projectile-pool
 TcpEvent TcpEvent-type TcpEvent-uuid TcpEvent-data)
 
 (struct GameState(quit time players planets projectiles) #:transparent)
 (struct Player(id name pos energy color) #:transparent)
 (struct Vector2D(x y) #:transparent)
 (struct Planet(pos radius image) #:transparent)
-(struct Projectile(uuid pos velocity accleration) #:transparent)
+(struct Projectile(uuid pos velocity accleration pool) #:transparent)
 (struct TcpEvent(type uuid data) #:transparent)
