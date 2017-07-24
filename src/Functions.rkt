@@ -37,9 +37,15 @@
     (map 
         (lambda 
             (p) 
-            (+ 
-                (Player-energy p)
-            2)
+            (struct-copy 
+                Player 
+                p
+                (energy 
+                    (+ 
+                        (Player-energy p)
+                    2)
+                )
+            )
         ) 
         players
     )
