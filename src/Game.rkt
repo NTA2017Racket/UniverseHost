@@ -160,26 +160,6 @@
     (Vector2D 1 0)
 )
 
-(define (update-projectiles state)
-    (define proj (GameState-projectiles state))
-    (define newproj
-        (map
-            (lambda (p)
-                ;Update acclerations from gravity
-                ; update velocity from accleration
-                (struct-copy Projectile p
-                    (velocity (+ (Projectile-velocity p) (Projectile-accleration p)))
-                    (pos (+ (Projectile-pos p) (Projectile-velocity p)))
-                )
-            )
-            (proj)
-        )
-    )
-    (struct-copy GameState state
-        (projectiles newproj)
-    )
-)
-
 (define 
     (key-press state a-key)
     (if (key=? a-key "escape")
@@ -190,6 +170,21 @@
 
 (define 
     (update state)
+        (define newproj
+        
+        (map
+            (lambda (p)
+                ; Update acclerations from gravity
+                ; update velocity from accleration
+                (writeln "test")
+                (struct-copy Projectile p
+                    (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
+                    (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
+                )
+            )
+            (GameState-projectiles state)
+        )
+        )
     (struct-copy
         GameState 
         state 
@@ -201,10 +196,11 @@
         (players
             (add-energy (GameState-players state))
         )
+        (projectiles newproj)
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS (list))
+(big-bang (GameState #false 0 PLAYERS PLANETS (list (Projectile 1 (Vector2D 200 200) (Vector2D 5 5) (Vector2D 1 0))))
     (to-draw render)
     (on-key key-press)
     (on-tick update)
