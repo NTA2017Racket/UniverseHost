@@ -4,10 +4,11 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 
-(provide GameState GameState-quit GameState-time GameState-players GameState-planets Player Player-id Player-name Player-pos Player-energy Vector2D Vector2D-x Vector2D-y
-Planet Planet-pos Planet-radius Planet-image)
+(provide GameState GameState-quit GameState-time GameState-players GameState-planets Player Player-id Player-name 
+Player-pos Player-energy Player-color Vector2D Vector2D-x Vector2D-y Planet Planet-pos Planet-radius Planet-image)
 
 (struct GameState(quit time players planets) #:transparent)
-(struct Player(id name pos energy) #:transparent)
+(struct Player(id name pos energy color) #:transparent)
 (struct Vector2D(x y) #:transparent)
 (struct Planet(pos radius image) #:transparent)
+;(struct Projectile(uuid ))

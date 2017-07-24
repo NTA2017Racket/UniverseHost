@@ -8,7 +8,7 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide add-player convert-posn get-object-texture add-energy Vector2D-player)
+(provide add-player convert-posn get-object-texture add-energy position-player)
 
 (define (add-player state player)
     (struct-copy 
@@ -56,7 +56,7 @@
     )
 )
 
-(define (Vector2D-player planets) 
+(define (position-player planets) 
     (define xpos (random 50 (- WINDOW.WIDTH 50)))
     (define ypos (random 50 (- WINDOW.HEIGHT 50)))
     (Vector2D xpos ypos)

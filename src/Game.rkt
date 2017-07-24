@@ -26,7 +26,7 @@
 )
 
 (define PLAYERS
-    (list (Player 1 "Test" (Vector2D-player PLANETS) 10) (Player 2 "Spieler" (Vector2D-player PLANETS) 10) (Player 3 "Spieler" (Vector2D-player PLANETS) 20))
+    (list (Player 1 "Test" (position-player PLANETS) 10 "red") (Player 2 "Spieler" (position-player PLANETS) 10 "green") (Player 3 "Spieler" (position-player PLANETS) 20 "white"))
 )
 
 ; Render parts of screen
@@ -50,7 +50,7 @@
            )
         )
         20
-        "red"
+        (Player-color pl)
     )
 )
 
@@ -84,7 +84,7 @@
     (place-images 
         (append
             (list 
-                (render-counter 
+                (render-counter
                     (GameState-time state)
                 "white"
                 )
