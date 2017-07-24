@@ -1,5 +1,7 @@
+#lang racket
 
 (require "Struct.rkt")
+(require "TCPEvents.rkt")
 
 (define _EVENTS (list))
 

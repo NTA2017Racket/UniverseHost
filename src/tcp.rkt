@@ -9,14 +9,17 @@
 (require racket/future)
 (require alexis/util/abbreviations)
 (require "GameManager.rkt")
+(require 2htdp/batch-io)
 
 (define CLIENTLIST (make-hash))
 
 (define (loop id in)
     (define ClientInput (read-line in))
     (if (equal? ClientInput eof)
-        (dln "EOF")
-        (_removePlayer id)
+        (lambda ()
+            (dln "EOF")
+            (_removePlayer id)
+        )
         (dln (string-append id "==>" ClientInput))
     )
     (if (equal? ClientInput eof)
@@ -33,7 +36,7 @@
     (dln (string-append id " connected!"))
     (_addNewPlayer id)
     (dict-set! CLIENTLIST id out)
-    (display "HALLO\n" out)
+    (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
     (thread
         (loop id in)
@@ -73,7 +76,7 @@
             )
             (
                 (dln (string-append "Send message to " k "."))
-                (dln (string-append message "\n") v)
+                (display (string-append message "\n") v)
                 (flush-output v)
             )
         )

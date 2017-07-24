@@ -1,3 +1,4 @@
+#lang racket
 
 (define PLAYERJOINED "PJ")
 (define PLAYERLEFT "PL")
