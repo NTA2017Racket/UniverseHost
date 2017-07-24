@@ -11,8 +11,6 @@
 (require "GameManager.rkt")
 (require 2htdp/batch-io)
 
-(define CLIENTLIST (make-hash))
-
 (define (loop id in)
     (define ClientInput (read-line in))
     (if (equal? ClientInput eof)
@@ -20,7 +18,9 @@
             (dln "EOF")
             (_removePlayer id)
         )
-        (dln (string-append id "==>" ClientInput))
+        (lambda ()
+            (dln (string-append id "==>" ClientInput))
+        )
     )
     (if (equal? ClientInput eof)
         (lambda ()
@@ -33,8 +33,8 @@
 
 (define (handle in out)
     (define id (uuid-generate))
-    (dln (string-append id " connected!"))
     (_addNewPlayer id)
+    (dln (string-append (nameAndID id) connected!"))
     (dict-set! CLIENTLIST id out)
     (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
