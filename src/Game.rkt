@@ -134,13 +134,16 @@
 
 (define 
     (update state)
-    (struct-copy 
+    (struct-copy
         GameState 
         state 
         (time 
             (+ 
                 (GameState-time state) 
             1)
+        )
+        (players
+            (add-energy (GameState-players state))
         )
     )
 )
