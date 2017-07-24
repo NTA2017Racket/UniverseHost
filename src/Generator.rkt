@@ -6,10 +6,11 @@
 
 (require "Struct.rkt")
 (require "Constants.rkt")
+(require "Functions.rkt")
 
 (provide generate-planets)
 
-(define (render-planet rad) (scale/xy (/ rad 100) (/ rad 100) PLANETTEXTURE))
+(define (render-planet rad) (scale/xy (/ rad 100) (/ rad 100) (get-object-texture rad)))
 
 (define (generate-planet)
     (define px (random 10 WINDOW.WIDTH))
