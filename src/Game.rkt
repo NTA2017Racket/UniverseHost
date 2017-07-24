@@ -22,20 +22,26 @@
 )
 
 (define PLANETS 
-    (generate-planets 2)
+    (generate-planets 20)
 )
 
 (define PLAYERS
     (list (Player 1 "Test" (position-player PLANETS) 10 "red") (Player 2 "Spieler" (position-player PLANETS) 10 "green") (Player 3 "Spieler" (position-player PLANETS) 20 "white"))
 )
 
+(define DOT (circle 5 "solid" "red"))
+
+(define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 5 5) (Vector2D 1 0)) (Projectile 2 (Vector2D 400 200) (Vector2D -5 5) (Vector2D -1 0))))
+
 ; Render parts of screen
 (define (render-player-hud pl)
-    (define str (number->string
-                (round
-                    (Player-energy pl)
+    (define str 
+        (number->string
+            (round
+                (Player-energy pl)
+            )
         )
-    ))
+    )
     (text
         (string-append
             (Player-name pl)
@@ -78,6 +84,10 @@
     )
 )
 
+(define (render-projectile proj)
+    DOT
+)
+
 ; Render main function
 
 (define (render state) 
@@ -89,6 +99,13 @@
                 "white"
                 )
             ) 
+            (map
+                (lambda
+                    (pl)
+                    (render-player-hud pl)
+                )
+                (GameState-players state)
+            )
             (map 
                 (lambda 
                     (p) 
@@ -98,15 +115,22 @@
             )
             (map
                 (lambda
-                    (pl)
-                    (render-player-hud pl)
+                    (p)
+                    (render-projectile p)
                 )
-                (GameState-players state)
+                (GameState-projectiles state)
             )
         )
         (append 
             (list 
                 (make-posn 50 50)
+            )
+            (map
+                (lambda
+                    (p)
+                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                )
+                (GameState-players state)
             ) 
             (map 
                 (lambda
@@ -120,9 +144,11 @@
             (map
                 (lambda
                     (p)
-                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                    (convert-posn
+                        (Projectile-pos p)
+                    )
                 )
-                (GameState-players state)
+                (GameState-projectiles state)
             )
         )
     BACKGROUND
@@ -134,6 +160,9 @@
     (exit)
 )
 
+(define (calculate-gravity pos planets)
+    (Vector2D 1 0)
+)
 
 (define 
     (key-press state a-key)
@@ -145,6 +174,20 @@
 
 (define 
     (update state)
+        (define newproj
+
+        (map
+            (lambda (p)
+                ; Update acclerations from gravity
+                ; update velocity from accleration
+                (struct-copy Projectile p
+                    (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
+                    (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
+                )
+            )
+            (GameState-projectiles state)
+        )
+        )
     (struct-copy
         GameState 
         state 
@@ -156,10 +199,11 @@
         (players
             (add-energy (GameState-players state))
         )
+        (projectiles newproj)
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS)
+(big-bang (GameState #false 0 PLAYERS PLANETS PROJ)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
