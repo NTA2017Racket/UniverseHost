@@ -22,7 +22,7 @@
 )
 
 (define PLANETS 
-    (generate-planets 2)
+    (generate-planets 20)
 )
 
 (define PLAYERS
@@ -89,13 +89,6 @@
                 "white"
                 )
             ) 
-            (map 
-                (lambda 
-                    (p) 
-                    (Planet-image p)
-                ) 
-                (GameState-planets state)
-            )
             (map
                 (lambda
                     (pl)
@@ -103,10 +96,24 @@
                 )
                 (GameState-players state)
             )
+            (map 
+                (lambda 
+                    (p) 
+                    (Planet-image p)
+                ) 
+                (GameState-planets state)
+            )
         )
         (append 
             (list 
                 (make-posn 50 50)
+            )
+            (map
+                (lambda
+                    (p)
+                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                )
+                (GameState-players state)
             ) 
             (map 
                 (lambda
@@ -116,13 +123,6 @@
                     )
                 )
                 (GameState-planets state)
-            )
-            (map
-                (lambda
-                    (p)
-                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
-                )
-                (GameState-players state)
             )
         )
     BACKGROUND
@@ -134,6 +134,24 @@
     (exit)
 )
 
+
+(define (update-projectiles state)
+    (define proj (GameState-projectiles state))
+    (define newproj
+        (map
+            (lambda (p)
+                ;Update acclerations from gravity
+                ; update velocity from accleration
+                (struct-copy Projectile p
+                (velocity (+ (Projectile-velocity p) (Projectile-accleration))))
+            )
+            (proj)
+        )
+    )
+    (struct-copy GameState state
+        (projectiles newproj)
+    )
+)
 
 (define 
     (key-press state a-key)
@@ -159,7 +177,7 @@
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS)
+(big-bang (GameState #false 0 PLAYERS PLANETS (list))
     (to-draw render)
     (on-key key-press)
     (on-tick update)
