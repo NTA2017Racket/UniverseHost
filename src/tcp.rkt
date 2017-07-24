@@ -4,12 +4,16 @@
 (require libuuid)
 (require "Struct.rkt")
 
+
+
 (define (handle in out)
     (display "HALLO\n" out)
     (define id (uuid-generate))
+    (display (string-append id " connected!\n") (current-output-port))
     (define (loop)
         (define input (read-line in))
         (display (string-append "UUID: " id " | " input "\n") (current-output-port))
+
         (loop)
     )
     (loop)
@@ -39,6 +43,6 @@
     )
 )
 
-;(serve 8080)
+(serve 8080)
 
 (provide serve)
