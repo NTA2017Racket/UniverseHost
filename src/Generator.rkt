@@ -15,7 +15,7 @@
 (define (generate-planet)
     (define px (random 10 WINDOW.WIDTH))
     (define py (random 10 WINDOW.HEIGHT))
-    (define rad (random 15 50))
+    (define rad (random 15 65))
     (Planet (Position px py) rad (render-planet rad))
 )
 

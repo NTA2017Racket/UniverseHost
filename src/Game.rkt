@@ -12,7 +12,7 @@
 (require "Functions.rkt")
 
 (define BACKGROUND (scale/xy (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH) (/ WINDOW.HEIGHT BACKGROUNDTEXTURE.HEIGHT) BACKGROUNDTEXTURE))
-(define PLANETS (generate-planets 10))
+(define PLANETS (generate-planets 20))
 
 (define (render-counter num col)
     (text 

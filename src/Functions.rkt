@@ -17,7 +17,8 @@
 
 (define (get-object-texture rad)
     (cond
-        ((> rad 40) SUNTEXTURE)
+        ((> rad 50) SUNTEXTURE)
+        ((< rad 25) MOONTEXTURE)
         (else PLANETTEXTURE)
     )
 )
