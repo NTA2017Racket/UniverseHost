@@ -8,10 +8,20 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide add-player convert-posn get-object-texture)
+(provide add-player convert-posn get-object-texture add-energy)
 
-(define (add-player state player) (GameState (GameState-quit state) (GameState-time state)
- (append (GameState-players state) player) (GameState-planets state)))
+(define (add-player state player)
+    (struct-copy 
+        GameState 
+        state 
+        (players 
+            (append 
+                (GameState-players state)
+                player
+            )
+        )
+    )
+)
 
 (define (convert-posn pos) (make-posn (Position-x pos) (Position-y pos)))
 
@@ -20,5 +30,17 @@
         ((> rad 50) SUNTEXTURE)
         ((< rad 25) MOONTEXTURE)
         (else PLANETTEXTURE)
+    )
+)
+
+(define (add-energy players)
+    (map 
+        (lambda 
+            (p) 
+            (+ 
+                (Player-energy p)
+            2)
+        ) 
+        players
     )
 )

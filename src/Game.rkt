@@ -66,7 +66,8 @@
     )
 )
 
-(define (stop-game state)
+(define 
+    (stop-game state)
     (exit)
 )
 
@@ -78,26 +79,16 @@
     )
 )
 
-(define (add-energy players)
-    (map 
-        (lambda 
-            (p) 
-            (+ 
-                (Player-energy p)
-            2)
-        ) 
-        players
-    )
-)
-
 (define 
     (update state)
-    (GameState #false 
-        (+ 
-            (GameState-time state)
-        1)
-        (add-energy (GameState-players state))
-        (GameState-planets state)
+    (struct-copy 
+        GameState 
+        state 
+        (time 
+            (+ 
+                (GameState-time state) 
+            1)
+        )
     )
 )
 
