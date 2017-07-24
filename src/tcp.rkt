@@ -8,6 +8,7 @@
 (install-readline!)
 (require racket/future)
 (require alexis/util/abbreviations)
+(require "GameManager.rkt")
 
 (define CLIENTLIST (make-hash))
 
@@ -15,6 +16,7 @@
     (define ClientInput (read-line in))
     (if (equal? ClientInput eof)
         (dln "EOF")
+        (_removePlayer id)
         (dln (string-append id "==>" ClientInput))
     )
     (if (equal? ClientInput eof)
@@ -29,6 +31,7 @@
 (define (handle in out)
     (define id (uuid-generate))
     (dln (string-append id " connected!"))
+    (_addNewPlayer id)
     (dict-set! CLIENTLIST id out)
     (display "HALLO\n" out)
     (flush-output out)
