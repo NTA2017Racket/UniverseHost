@@ -8,7 +8,7 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide add-player convert-posn get-object-texture add-energy)
+(provide add-player convert-posn get-object-texture add-energy position-player)
 
 (define (add-player state player)
     (struct-copy 
@@ -56,4 +56,19 @@
     )
 )
 
-(define (position-player planets) "")
+(define (position-player planets) 
+    (define xpos (random 50 (- WINDOW.WIDTH 50)))
+    (define ypos (random 50 (- WINDOW.HEIGHT 50)))
+    (Position xpos ypos)
+)
+
+(define (planet-collision planet x y)
+    (define poss (Planet-pos planet))
+    (< (distance x y (Position-x poss) (Position-y poss)) (Planet-radius planet))
+)
+
+(define (distance x y x2 y2)
+    (define distx (- x x2))
+    (define disty (- y y2))
+    (sqrt (+ (* distx distx) (* disty disty)))
+)

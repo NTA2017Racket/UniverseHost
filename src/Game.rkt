@@ -22,11 +22,11 @@
 )
 
 (define PLANETS 
-    (generate-planets 20)
+    (generate-planets 2)
 )
 
 (define PLAYERS
-    (list (Player 1 "Test" (Position 20 20) 10) (Player 2 "Spieler" (Position 60 20) 10) (Player 3 "Spieler" (Position 90 20) 20))
+    (list (Player 1 "Test" (position-player PLANETS) 10) (Player 2 "Spieler" (position-player PLANETS) 10) (Player 3 "Spieler" (position-player PLANETS) 20))
 )
 
 ; Render parts of screen
@@ -133,6 +133,7 @@
     (stop-game state)
     (exit)
 )
+
 
 (define 
     (key-press state a-key)
