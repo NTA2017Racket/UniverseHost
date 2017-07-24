@@ -6,12 +6,12 @@
 
 ; This file defines universal constants.
 
-(provide WINDOW.HEIGHT WINDOW.WIDTH BACKGROUNDTEXTURE BACKGROUNDTEXTURE.HEIGHT BACKGROUNDTEXTURE.WIDTH)
+(provide WINDOW.HEIGHT WINDOW.WIDTH BACKGROUNDTEXTURE BACKGROUNDTEXTURE.HEIGHT BACKGROUNDTEXTURE.WIDTH PLANETTEXTURE)
 
 (define WINDOW.HEIGHT 675)
 (define WINDOW.WIDTH 1200)
 
-(define BACKGROUNDTEXTURE (bitmap/file "../assets/Background.png"))
+(define BACKGROUNDTEXTURE (bitmap "../assets/Background.png"))
 (define BACKGROUNDTEXTURE.WIDTH (image-width BACKGROUNDTEXTURE))
 (define BACKGROUNDTEXTURE.HEIGHT (image-height BACKGROUNDTEXTURE))
-(define PLANETTEXTURE (bitmap/file "../assets/Planet.png"))
+(define PLANETTEXTURE (bitmap "../assets/Planet.png"))
