@@ -190,6 +190,7 @@
                 ; Update acclerations from gravity
                 ; update velocity from accleration
                 (struct-copy Projectile p
+                    (accleration (vector-add (Projectile-accleration p) (calculate-gravity (Projectile-pos p) (GameState-planets state))))
                     (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
                     (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
                 )
