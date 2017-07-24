@@ -33,7 +33,7 @@
 (define (get-object-texture rad)
     (cond
         ((> rad 50) SUNTEXTURE)
-        ((< rad 25) MOONTEXTURE)
+        ((< rad 27) MOONTEXTURE)
         (else PLANETTEXTURE)
     )
 )
@@ -45,13 +45,15 @@
             (struct-copy 
                 Player 
                 p
-                (energy 
+                (energy
                     (+ 
                         (Player-energy p)
-                    2)
+                    0.2)
                 )
             )
         ) 
         players
     )
 )
+
+(define (position-player planets) "")

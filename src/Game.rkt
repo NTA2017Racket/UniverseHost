@@ -31,13 +31,23 @@
 
 ; Render parts of screen
 (define (render-player-hud pl)
+    (define str (number->string
+                (round
+                    (Player-energy pl)
+        )
+    ))
     (text
         (string-append
             (Player-name pl)
             ": "
-            (number->string
-                (Player-energy pl)
-            )
+           (substring 
+                str
+                0
+                (- 
+                    (string-length str)
+                    2
+                )
+           )
         )
         20
         "red"
@@ -128,7 +138,7 @@
     (key-press state a-key)
     (if (key=? a-key "escape")
         (stop-game state)
-        (state)
+        state
     )
 )
 
@@ -138,7 +148,7 @@
         GameState 
         state 
         (time 
-            (+ 
+            (+
                 (GameState-time state) 
             1)
         )
