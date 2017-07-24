@@ -26,7 +26,7 @@
 )
 
 (define PLAYERS
-    (list (Player 1 "Test" (position-player PLANETS) 10) (Player 2 "Spieler" (position-player PLANETS) 10) (Player 3 "Spieler" (position-player PLANETS) 20))
+    (list (Player 1 "Test" (Vector2D-player PLANETS) 10) (Player 2 "Spieler" (Vector2D-player PLANETS) 10) (Player 3 "Spieler" (Vector2D-player PLANETS) 20))
 )
 
 ; Render parts of screen
