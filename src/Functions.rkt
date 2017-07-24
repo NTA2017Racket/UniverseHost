@@ -23,7 +23,12 @@
     )
 )
 
-(define (convert-posn pos) (make-posn (Position-x pos) (Position-y pos)))
+(define (convert-posn pos)
+    (make-posn 
+        (Position-x pos) 
+        (Position-y pos)
+    )
+)
 
 (define (get-object-texture rad)
     (cond

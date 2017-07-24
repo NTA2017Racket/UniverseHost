@@ -11,6 +11,8 @@
 (require "Generator.rkt")
 (require "Functions.rkt")
 
+; defines temporary variables. Should be moved.
+
 (define BACKGROUND 
     (scale/xy 
         (/ WINDOW.WIDTH BACKGROUNDTEXTURE.WIDTH)
@@ -23,13 +25,50 @@
     (generate-planets 20)
 )
 
+(define PLAYERS
+    (list (Player 1 "Test" (Position 20 20) 10) (Player 2 "Spieler" (Position 60 20) 10) (Player 3 "Spieler" (Position 90 20) 20))
+)
+
+; Render parts of screen
+(define (render-player-hud pl)
+    (text
+        (string-append
+            (Player-name pl)
+            ": "
+            (number->string
+                (Player-energy pl)
+            )
+        )
+        20
+        "red"
+    )
+)
+
 (define (render-counter num col)
+    (define str 
+        (number->string
+            (round
+                (/
+                    (exact->inexact num)
+                28)
+            )
+        )
+    )
     (text 
-    (number->string
-    (round (/
-        (exact->inexact num)
-     28)))
-    30 "white"))
+        (substring
+            str
+            0
+            (- 
+                (string-length str)
+                2
+            )
+        )
+        30
+        "white"
+    )
+)
+
+; Render main function
 
 (define (render state) 
     (place-images 
@@ -47,19 +86,33 @@
                 ) 
                 (GameState-planets state)
             )
+            (map
+                (lambda
+                    (pl)
+                    (render-player-hud pl)
+                )
+                (GameState-players state)
+            )
         )
         (append 
             (list 
                 (make-posn 50 50)
             ) 
             (map 
-                (lambda 
-                    (p) 
-                    (convert-posn 
+                (lambda
+                    (p)
+                    (convert-posn
                         (Planet-pos p)
                     )
                 )
                 (GameState-planets state)
+            )
+            (map
+                (lambda
+                    (p)
+                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                )
+                (GameState-players state)
             )
         )
     BACKGROUND
@@ -92,7 +145,7 @@
     )
 )
 
-(big-bang (GameState #false 0 (list) PLANETS)
+(big-bang (GameState #false 0 PLAYERS PLANETS)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
