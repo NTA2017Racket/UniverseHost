@@ -56,6 +56,10 @@
     )
 )
 
+(define (calculate-grav x y planets)
+1
+)
+
 (define (position-player planets) 
     (define xpos (random 50 (- WINDOW.WIDTH 50)))
     (define ypos (random 50 (- WINDOW.HEIGHT 50)))
