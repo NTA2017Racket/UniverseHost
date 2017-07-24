@@ -29,6 +29,8 @@
     (list (Player 1 "Test" (position-player PLANETS) 10 "red") (Player 2 "Spieler" (position-player PLANETS) 10 "green") (Player 3 "Spieler" (position-player PLANETS) 20 "white"))
 )
 
+(define DOT (circle 5 "solid" "red"))
+
 ; Render parts of screen
 (define (render-player-hud pl)
     (define str (number->string
@@ -78,6 +80,10 @@
     )
 )
 
+(define (render-projectile proj)
+    DOT
+)
+
 ; Render main function
 
 (define (render state) 
@@ -103,6 +109,13 @@
                 ) 
                 (GameState-planets state)
             )
+            (map
+                (lambda
+                    (p)
+                    (render-projectile p)
+                )
+                (GameState-projectiles state)
+            )
         )
         (append 
             (list 
@@ -124,6 +137,15 @@
                 )
                 (GameState-planets state)
             )
+            (map
+                (lambda
+                    (p)
+                    (convert-posn
+                        (Projectile-pos p)
+                    )
+                )
+                (GameState-projectiles state)
+            )
         )
     BACKGROUND
     )
@@ -134,6 +156,9 @@
     (exit)
 )
 
+(define (calculate-gravity pos planets)
+    (Vector2D 1 0)
+)
 
 (define (update-projectiles state)
     (define proj (GameState-projectiles state))
@@ -143,7 +168,9 @@
                 ;Update acclerations from gravity
                 ; update velocity from accleration
                 (struct-copy Projectile p
-                (velocity (+ (Projectile-velocity p) (Projectile-accleration))))
+                    (velocity (+ (Projectile-velocity p) (Projectile-accleration p)))
+                    (pos (+ (Projectile-pos p) (Projectile-velocity p)))
+                )
             )
             (proj)
         )
