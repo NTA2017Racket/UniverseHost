@@ -6,16 +6,17 @@
 
 (require "Struct.rkt")
 (require "Constants.rkt")
+(require "Functions.rkt")
 
 (provide generate-planets)
 
-(define (render-planet rad col) (circle rad "solid" col))
+(define (render-planet rad) (scale/xy (/ rad 100) (/ rad 100) (get-object-texture rad)))
 
 (define (generate-planet)
     (define px (random 10 WINDOW.WIDTH))
     (define py (random 10 WINDOW.HEIGHT))
-    (define rad (random 15 50))
-    (Planet (Position px py) rad (render-planet rad "red"))
+    (define rad (random 15 65))
+    (Planet (Position px py) rad (render-planet rad))
 )
 
 (define (generate-planets num)
