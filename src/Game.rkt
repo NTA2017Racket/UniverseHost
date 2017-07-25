@@ -160,12 +160,12 @@
 )
 
 (define (calculate-gravity pos planets)
-    (vector-div (vector-sum 
+    (vector-sum 
         (for/list ((i planets))
         (define v (vector-sub (Planet-pos i) pos))
-            (vector-div v (expt (/ (vector-length v) 10) 2))
+            (vector-div v (expt (* (vector-length v) 20) 2))
         )
-    ) 150)
+    )
 )
 
 (define 
