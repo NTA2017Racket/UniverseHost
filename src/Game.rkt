@@ -163,8 +163,8 @@
 (define (calculate-gravity pos planets)
     (vector-sum 
         (for/list ((i planets))
-        (define v (vector-sub (Planet-pos i) pos))
-            (vector-div v (expt (* (vector-length v) 20) 2))
+            (define v (vector-sub (Planet-pos i) pos))
+            (if (< (vector-length v) (Planet-radius i)) (Vector2D 0 0) (vector-div v (expt (* (vector-length v) 20) 2)))
         )
     )
 )
