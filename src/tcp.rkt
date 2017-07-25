@@ -14,7 +14,7 @@
 (require "GameManager.rkt")
 (require 2htdp/batch-io)
 
-(define (loop id in)
+(define (loop id in out)
     (define ClientInput (read-line in))
     (if (equal? ClientInput eof)
         (lambda ()
@@ -23,6 +23,8 @@
         )
         (lambda ()
             (dln (string-append id "==>" ClientInput))
+            (display "> " out)
+            (flush-output out)
         )
     )
     (if (equal? ClientInput eof)
@@ -30,7 +32,7 @@
             (dict-remove! CLIENTLIST id)
             (kill-thread (current-thread))
         )
-        (loop id in)
+        (loop id in out)
     )
 )
 
@@ -41,8 +43,10 @@
     (dict-set! CLIENTLIST id out)
     (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
+    (display "> " out)
+    (flush-output out)
     (thread
-        (loop id in)
+        (loop id in out)
     )
 )
 
