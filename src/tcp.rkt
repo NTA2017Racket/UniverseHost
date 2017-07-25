@@ -23,8 +23,6 @@
         )
         (lambda ()
             (dln (string-append id "==>" ClientInput))
-            (display "> " out)
-            (flush-output out)
         )
     )
     (if (equal? ClientInput eof)
@@ -44,7 +42,7 @@
     (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
     (display "> " out)
-    (flush-output out)
+    ;(flush-output out)
     (thread
         (loop id in out)
     )
