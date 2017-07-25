@@ -10,6 +10,7 @@
 (require "Constants.rkt")
 (require "Generator.rkt")
 (require "Functions.rkt")
+(require "VectorMath.rkt")
 
 ; defines temporary variables. Should be moved.
 
@@ -29,7 +30,7 @@
     (list (Player 1 "Test" (position-player PLANETS) 10 "red") (Player 2 "Spieler" (position-player PLANETS) 10 "green") (Player 3 "Spieler" (position-player PLANETS) 20 "white"))
 )
 
-(define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 5 5) (Vector2D 1 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D -5 5) (Vector2D -1 0) #true "green")))
+(define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")))
 
 ; Render parts of screen
 (define (render-player-hud pl)
@@ -161,9 +162,10 @@
 (define (calculate-gravity pos planets)
     (vector-div (vector-sum 
         (for/list ((i planets))
-            (vector-sub pos (Planet-pos i))
+        (define v (vector-sub (Planet-pos i) pos))
+            (vector-div v (expt (/ (vector-length v) 10) 2))
         )
-    ) 100000)
+    ) 150)
 )
 
 (define 
