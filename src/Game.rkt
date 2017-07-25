@@ -159,7 +159,11 @@
 )
 
 (define (calculate-gravity pos planets)
-    (Vector2D -0.5 0)
+    (vector-div (vector-sum 
+        (for/list ((i planets))
+            (vector-sub pos (Planet-pos i))
+        )
+    ) 100000)
 )
 
 (define 
