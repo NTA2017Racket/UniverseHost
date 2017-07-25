@@ -1,6 +1,9 @@
 #lang racket
 
-;(require misc1/syntax)
+;De:
+;alexis-util
+;libuuid
+
 (require libuuid)
 (require "Struct.rkt")
 (require readline)
