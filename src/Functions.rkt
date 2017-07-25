@@ -8,7 +8,7 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide add-player convert-posn get-object-texture add-energy position-player vector-add vector-sub vector-sum vector-div)
+(provide add-player convert-posn get-object-texture add-energy position-player)
 
 (define (add-player state player)
     (struct-copy 
@@ -75,21 +75,4 @@
     (define distx (- x x2))
     (define disty (- y y2))
     (sqrt (+ (* distx distx) (* disty disty)))
-)
-
-(define (vector-add a b)
-    (Vector2D (+ (Vector2D-x a) (Vector2D-x b)) (+ (Vector2D-y a) (Vector2D-y b)))
-)
-
-(define (vector-sub a b)
-    (Vector2D (- (Vector2D-x a) (Vector2D-x b)) (- (Vector2D-y a) (Vector2D-y b)))
-)
-
-(define (vector-sum a)
-    (Vector2D (lsum (for/list ((i a)) (Vector2D-x i))) (lsum (for/list ((i a)) (Vector2D-y i))))
-)
-(define (lsum L)
-  (apply + L))
-(define (vector-div a b)
-    (Vector2D (/ (Vector2D-x a) b) (/ (Vector2D-y a) b))
 )
