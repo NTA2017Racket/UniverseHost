@@ -1,6 +1,9 @@
 #lang racket
 
-;(require misc1/syntax)
+;De:
+;alexis-util
+;libuuid
+
 (require libuuid)
 (require "Struct.rkt")
 (require readline)
@@ -34,7 +37,7 @@
 (define (handle in out)
     (define id (uuid-generate))
     (_addNewPlayer id)
-    (dln (string-append (nameAndID id) connected!"))
+    (dln (string-append (nameAndID id) "connected!"))
     (dict-set! CLIENTLIST id out)
     (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
