@@ -23,7 +23,7 @@
 )
 
 (define PLANETS 
-    (generate-planets 20)
+    (generate-planets 10)
 )
 
 (define PLAYERS
@@ -32,6 +32,7 @@
 
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")))
 
+; Render parts of screen
 ; Render parts of screen
 (define (render-player-hud pl)
     (define str 
@@ -176,6 +177,32 @@
     )
 )
 
+(define (handle-physics projectiles planets)
+            (map
+            (lambda (p)
+                ; Update acclerations from gravity
+                ; update velocity from accleration
+                (struct-copy Projectile p
+                    (accleration (vector-add (Projectile-accleration p) (calculate-gravity (Projectile-pos p) planets)))
+                    (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
+                    (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
+                )
+            )
+        (map
+            (lambda (p)
+                ; Update acclerations from gravity
+                ; update velocity from accleration
+                (struct-copy Projectile p
+                    (accleration (vector-add (Projectile-accleration p) (calculate-gravity (Projectile-pos p) planets)))
+                    (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
+                    (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
+                )
+            )
+            projectiles
+                )
+            )
+)
+
 (define 
     (update state)
     (struct-copy
@@ -189,18 +216,12 @@
         (players
             (add-energy (GameState-players state))
         )
-        (projectiles (map
-            (lambda (p)
-                ; Update acclerations from gravity
-                ; update velocity from accleration
-                (struct-copy Projectile p
-                    (accleration (vector-add (Projectile-accleration p) (calculate-gravity (Projectile-pos p) (GameState-planets state))))
-                    (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
-                    (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
-                )
+        (projectiles 
+            (handle-physics 
+                (GameState-projectiles state)
+                (GameState-planets state)
             )
-            (GameState-projectiles state)
-        ))
+        )
     )
 )
 
