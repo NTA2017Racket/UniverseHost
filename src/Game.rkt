@@ -23,7 +23,7 @@
 )
 
 (define PLANETS 
-    (generate-planets 5)
+    (generate-planets 1)
 )
 
 (define PLAYERS
@@ -31,7 +31,7 @@
 )
 
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")
-(Projectile 3 (Vector2D 400 420) (Vector2D 0 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
+(Projectile 3 (Vector2D 400 420) (Vector2D 00 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
 (Projectile 1 (Vector2D 30 220) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 (Projectile 1 (Vector2D 400 440) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 (Projectile 1 (Vector2D 300 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
@@ -41,6 +41,11 @@
 (Projectile 1 (Vector2D 600 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 (Projectile 1 (Vector2D 300 90) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 ))
+
+
+; global vars
+
+(define projectiles PROJ)
 
 ; Render parts of screen
 ; Render parts of screen
@@ -68,6 +73,14 @@
         20
         (Player-color pl)
     )
+)
+
+(define (add-projectile pr)
+    (set! projectiles (append projectiles (list pr)))
+)
+
+(define (remove-projectile pr)
+    (set! projectiles (remove pr projectiles))
 )
 
 (define (render-counter num col)
@@ -128,7 +141,7 @@
                     (p)
                     (render-projectile p)
                 )
-                (GameState-projectiles state)
+                projectiles
             )
         )
         (append 
@@ -158,7 +171,7 @@
                         (Projectile-pos p)
                     )
                 )
-                (GameState-projectiles state)
+                projectiles
             )
         )
     BACKGROUND
@@ -186,8 +199,8 @@
     )
 )
 
-(define (handle-physics projectiles planets)
-    (map
+(define (handle-physics planets)
+    (set! projectiles (map
         (lambda (p)
                 ; Update acclerations from gravity
                 ; update velocity from accleration
@@ -199,12 +212,14 @@
         )
     projectiles
     )
+    )
 )
 
 (define 
     (update state)
     #;(if (= (GameState-gc state) 400)(collect-garbage 'major)
     #;(collect-garbage 'incremental))
+    (handle-physics (GameState-planets state))
     (struct-copy
         GameState
         state
@@ -216,17 +231,11 @@
         (players
             (add-energy (GameState-players state))
         )
-        (projectiles
-            (handle-physics 
-                (GameState-projectiles state)
-                (GameState-planets state)
-            )
-        )
         #;(gc (if (= (GameState-gc state) 400) 0 (+ (GameState-gc state) 1)))
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS PROJ 0)
+(big-bang (GameState #false 0 PLAYERS PLANETS 0)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
