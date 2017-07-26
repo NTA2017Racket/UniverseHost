@@ -127,7 +127,7 @@
 (define (startREPL)
     (define (replLoop)
         (define input (readline "> "))
-        (brodcast input)
+        (broadcast input)
         (replLoop)
     )
     (replLoop)
