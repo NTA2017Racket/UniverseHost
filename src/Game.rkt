@@ -192,10 +192,12 @@
 
 (define 
     (update state)
+    (if (= (GameState-gc state) 400)(collect-garbage 'major)
+    (collect-garbage 'incremental))
     (struct-copy
-        GameState 
-        state 
-        (time 
+        GameState
+        state
+        (time
             (+
                 (GameState-time state) 
             1)
@@ -209,10 +211,11 @@
                 (GameState-planets state)
             )
         )
+        (gc (if (= (GameState-gc state) 400) 0 (+ (GameState-gc state) 1)))
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS PROJ)
+(big-bang (GameState #false 0 PLAYERS PLANETS PROJ 0)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
