@@ -10,17 +10,17 @@
 
 (define (_addNewPlayer id)
     (dict-set! CLIENTNAMELIST id DEFAULTNAME)
-    (set! _EVENTS (append _EVENTS (TcpEvent PLAYERJOINED id "")))
+    (set! _EVENTS (append _EVENTS (list (TcpEvent PLAYERJOINED id ""))))
 )
 
 (define (_removePlayer id)
     (dict-remove! CLIENTNAMELIST id)
-    (set! _EVENTS (append _EVENTS (TcpEvent PLAYERLEFT id "")))
+    (set! _EVENTS (append _EVENTS (list (TcpEvent PLAYERLEFT id ""))))
 )
 
 (define (_PlayerHasChangedName id newName)
     (dict-update! CLIENTNAMELIST id newName)
-    (set! _EVENTS (append _EVENTS (TcpEvent PLAYERHASCHANGEDNAME id newName)))
+    (set! _EVENTS (append _EVENTS (list (TcpEvent PLAYERHASCHANGEDNAME id newName))))
 )
 
 (define (_resolvePlayername id)
