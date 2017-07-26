@@ -11,6 +11,7 @@
 (require "Generator.rkt")
 (require "Functions.rkt")
 (require "VectorMath.rkt")
+(require "tcp.rkt")
 
 ; defines temporary variables. Should be moved.
 
@@ -23,7 +24,7 @@
 )
 
 (define PLANETS 
-    (generate-planets 1)
+    (generate-planets 10)
 )
 
 (define PLAYERS
@@ -80,7 +81,7 @@
 )
 
 (define (remove-projectile pr)
-    (set! projectiles (remove pr projectiles))
+    (set! projectiles (remove (list pr) projectiles))
 )
 
 (define (render-counter num col)
@@ -184,11 +185,11 @@
 )
 
 (define (calculate-gravity pos planets)
+    (define f #false)
     (define vm (vector-min
         (for/list ((i planets)) (vector-sub (Planet-pos i) pos))
     ))
-    #;(vector-div vm 10000)
-    (vector-mul vm 0.0001)
+    (ProjectileUpdate (vector-mul vm 0.0001) (< (vector-length vm) 5))
 )
 
 (define 
@@ -199,27 +200,27 @@
     )
 )
 
-(define (handle-physics planets)
-    (set! projectiles (map
-        (lambda (p)
-                ; Update acclerations from gravity
-                ; update velocity from accleration
-            (struct-copy Projectile p
-                (accleration (calculate-gravity (Projectile-pos p) planets))
-                (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
-                (pos (vector-add (Projectile-pos p) (Projectile-velocity p)))
-            )
+(define (update-physics planets)
+    (for-each (lambda (p)
+        (define pu (calculate-gravity (Projectile-pos p) planets))
+        (define new (struct-copy Projectile p
+            (accleration (ProjectileUpdate-vec pu))
+            (velocity (vector-add (Projectile-velocity p) (Projectile-accleration p)))
+            (pos (vector-add (Projectile-pos p) (Projectile-velocity p))))
         )
-    projectiles
+        (if (ProjectileUpdate-flag pu) (
+            set! projectiles (remove p projectiles)
+        ) (
+            set! projectiles (list-set projectiles (index-of projectiles p) new)
+        ))
     )
-    )
+projectiles)
 )
+
 
 (define 
     (update state)
-    #;(if (= (GameState-gc state) 400)(collect-garbage 'major)
-    #;(collect-garbage 'incremental))
-    (handle-physics (GameState-planets state))
+    (update-physics (GameState-planets state))
     (struct-copy
         GameState
         state
@@ -231,11 +232,12 @@
         (players
             (add-energy (GameState-players state))
         )
-        #;(gc (if (= (GameState-gc state) 400) 0 (+ (GameState-gc state) 1)))
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS 0)
+()
+
+(big-bang (GameState #false 0 PLAYERS PLANETS)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
