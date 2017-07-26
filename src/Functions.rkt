@@ -8,7 +8,7 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide add-player convert-posn get-object-texture add-energy position-player)
+(provide getStringWithoutLineBreak add-player convert-posn get-object-texture add-energy position-player)
 
 (define (add-player state player)
     (struct-copy 
@@ -75,4 +75,10 @@
     (define distx (- x x2))
     (define disty (- y y2))
     (sqrt (+ (* distx distx) (* disty disty)))
+)
+
+(define (getStringWithoutLineBreak str)
+    (define n (string-replace str "\n" ""))
+    (define r (string-replace n "\r" ""))
+    (string-replace r "\r\n" "")
 )
