@@ -20,23 +20,37 @@
 
 (define (loop id in out)
     (define (LoopTask ClientInput id in out)
-        (display (string-append (nameAndID id) ClientInput "\n> "))
+        (define (IHATETHISSHIT)
+            (define commandSplit (string-split ClientInput " "))
+            (define (SendThisPlayerAmessageBecauseWeChangedHisDisplaynameAndApplyIt)
+                (display (string-append "[Server]: We changed your name to " (list-ref commandSplit 1) "\n") out)
+                (display (string-append "A player changed his name to " (list-ref commandSplit 1) "\n> "))
+                (_PlayerHasChangedName id (list-ref commandSplit 1))
+            )
+            (define (SendThePlayerASyntaxError)
+                (display "Bad syntax\n" out)
+                (flush-output out)
+            )
+            (if (equal? (length commandSplit) 2)
+                (SendThisPlayerAmessageBecauseWeChangedHisDisplaynameAndApplyIt)
+                (SendThePlayerASyntaxError)
+            )
+        )
         (cond
             [
                 (number? (string->number (getStringWithoutLineBreak ClientInput))) 
                 (_PlayerShoot id (string->number (getStringWithoutLineBreak ClientInput)))
             ]
             [
-                (equal? (string-ref ClientInput 0) #\c) 
-                (define commandSplit (string-split ClientInput #rx"\\s"))
-                (if (> (length commandSplit) 1)
-                    (_PlayerHasChangedName id (list-ref commandSplit 1))
-                    (
-                        (display "Bad syntax" out)
-                        (flush-output out)
-                    )
+                (> (string-length ClientInput) 0)
+                (if (equal? (string-ref ClientInput 0) #\c)
+                    (IHATETHISSHIT)
+                    #false
                 )
             ]
+            (else
+                (display (string-append (nameAndID id) ClientInput "\n> "))
+            )
         )
         (display "> " out)
         (flush-output out)

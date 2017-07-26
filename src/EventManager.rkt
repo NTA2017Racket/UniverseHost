@@ -19,7 +19,7 @@
 )
 
 (define (_PlayerHasChangedName id newName)
-    (dict-update! CLIENTNAMELIST id newName)
+    (dict-set! CLIENTNAMELIST id newName)
     (set! _EVENTS (append _EVENTS (list (TcpEvent PLAYERHASCHANGEDNAME id newName))))
 )
 
