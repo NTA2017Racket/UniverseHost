@@ -174,7 +174,8 @@
     (define vm (vector-min
         (for/list ((i planets)) (vector-sub (Planet-pos i) pos))
     ))
-    (vector-div vm 10000)
+    #;(vector-div vm 10000)
+    (vector-mul vm 0.0001)
 )
 
 (define 
@@ -202,8 +203,8 @@
 
 (define 
     (update state)
-    (if (= (GameState-gc state) 400)(collect-garbage 'major)
-    (collect-garbage 'incremental))
+    #;(if (= (GameState-gc state) 400)(collect-garbage 'major)
+    #;(collect-garbage 'incremental))
     (struct-copy
         GameState
         state
@@ -221,7 +222,7 @@
                 (GameState-planets state)
             )
         )
-        (gc (if (= (GameState-gc state) 400) 0 (+ (GameState-gc state) 1)))
+        #;(gc (if (= (GameState-gc state) 400) 0 (+ (GameState-gc state) 1)))
     )
 )
 
