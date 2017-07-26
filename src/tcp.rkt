@@ -93,14 +93,12 @@
 
 (define (brodcast message)
     (dict-for-each CLIENTLIST (lambda (k v)
-        (printf "~a = ~s\n" k v)
         (cond
             ((port-closed? v)
                 (dict-remove! CLIENTLIST k)
-                ;(dln (string-append "Removed client" k "."))
+                (_removePlayer k)
             )
             (
-                ;(dln (string-append "Send message to " k "."))
                 (display (string-append "[Server]: " message "\n> ") v)
                 (flush-output v)
             )
