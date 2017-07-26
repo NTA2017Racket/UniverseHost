@@ -77,16 +77,18 @@
     (flush-output out)
     (display "> " out)
     (flush-output out)
-    (thread
-        (loop id in out)
-    )
+    (loop id in out)
 )
 
 (define (accept-and-handle listener)
     (define-values (in out) (tcp-accept listener))
-    (handle in out)
-    (close-input-port in)
-    (close-output-port out)
+    (thread
+        (lambda ()
+            (handle in out)
+            (close-input-port in)
+            (close-output-port out)
+        )
+    )
 )
 
 (define (serve port)
