@@ -16,6 +16,7 @@
 (require 2htdp/batch-io)
 (require parsack)
 (require "Functions.rkt")
+(require mzlib/string)
 
 (define (loop id in out)
     (define (LoopTask ClientInput id in out)
@@ -26,8 +27,15 @@
                 (_PlayerShoot id (string->number (getStringWithoutLineBreak ClientInput)))
             ]
             [
-                (equal? (string-ref ClientInput 0) "c") 
-                (dln "change")
+                (equal? (string-ref ClientInput 0) #\c) 
+                (define commandSplit (string-split ClientInput #rx"\\s"))
+                (if (> (length commandSplit) 1)
+                    (_PlayerHasChangedName id (list-ref commandSplit 1))
+                    (
+                        (display "Bad syntax" out)
+                        (flush-output out)
+                    )
+                )
             ]
         )
         (display "> " out)
