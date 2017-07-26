@@ -3,6 +3,7 @@
 ;De:
 ;alexis-util
 ;libuuid
+;parsack
 
 (require libuuid)
 (require "Struct.rkt")
@@ -13,10 +14,25 @@
 (require alexis/util/abbreviations)
 (require "GameManager.rkt")
 (require 2htdp/batch-io)
+(require parsack)
 
 (define (loop id in out)
     (define (LoopTask ClientInput id in out)
         (dln (string-append id "==>" ClientInput))
+        (cond
+            [
+                (number? (string->number ClientInput)) 
+                (lambda ()
+                    (dln "Number")
+                )
+            ]
+            [
+                (number? (string->number ClientInput)) 
+                (lambda ()
+                    (dln "Number")
+                )
+            ]
+        )
         (loop id in out)
     )
     (define ClientInput (read-line in))
