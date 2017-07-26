@@ -23,7 +23,7 @@
 )
 
 (define PLANETS 
-    (generate-planets 1)
+    (list (Planet (Vector2D 400 400) 50 PLANETTEXTURE))
 )
 
 (define PLAYERS
