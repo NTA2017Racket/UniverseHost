@@ -45,7 +45,7 @@
                 (> (string-length ClientInput) 0)
                 (if (equal? (string-ref ClientInput 0) #\c)
                     (IHATETHISSHIT)
-                    #false
+                    (display (string-append (nameAndID id) ClientInput "\n> "))
                 )
             ]
             (else
