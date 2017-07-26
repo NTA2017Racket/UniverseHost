@@ -36,8 +36,9 @@
 )
 
 (define (getLatestEvent)
-    _EVENTS
+    (define tempList _EVENTS)
     (set! _EVENTS (list))
+    tempList
 )
 
 (provide getLatestEvent nameAndID _PlayerShoot _resolvePlayername CLIENTLIST _addNewPlayer _removePlayer _PlayerHasChangedName)
