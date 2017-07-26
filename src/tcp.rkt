@@ -23,15 +23,15 @@
         (cond
             [
                 (number? (string->number (getStringWithoutLineBreak ClientInput))) 
-                (dln "Number")
+                (_PlayerShoot id (string->number (getStringWithoutLineBreak ClientInput)))
             ]
             [
-                (number? (string->number ClientInput)) 
-                (lambda ()
-                    (dln "Number")
-                )
+                (equal? (string-ref ClientInput 0) "c") 
+                (dln "change")
             ]
         )
+        (display "> " out)
+        (flush-output out)
         (loop id in out)
     )
     (define ClientInput (read-line in))
