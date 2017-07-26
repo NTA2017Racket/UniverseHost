@@ -18,6 +18,8 @@
 (require "Functions.rkt")
 (require mzlib/string)
 
+(define (start-server) (serve 8080))
+
 (define (loop id in out)
     (define (LoopTask ClientInput id in out)
         (define (IHATETHISSHIT)
@@ -107,7 +109,7 @@
     )
 )
 
-(define (brodcast message)
+(define (broadcast message)
     (dict-for-each CLIENTLIST (lambda (k v)
         (cond
             ((port-closed? v)
@@ -136,6 +138,4 @@
     (display (string-append message "\n"))
 )
 
-(serve 8080)
-
-(provide serve brodcast)
+(provide serve broadcast)

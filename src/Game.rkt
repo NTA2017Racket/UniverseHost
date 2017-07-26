@@ -11,6 +11,7 @@
 (require "Generator.rkt")
 (require "Functions.rkt")
 (require "VectorMath.rkt")
+(require "tcp.rkt")
 
 ; defines temporary variables. Should be moved.
 
@@ -233,6 +234,8 @@ projectiles)
         )
     )
 )
+
+()
 
 (big-bang (GameState #false 0 PLAYERS PLANETS)
     (to-draw render)
