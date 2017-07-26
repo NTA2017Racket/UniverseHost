@@ -234,7 +234,7 @@ projectiles)
     )
 )
 
-(big-bang (GameState #false 0 PLAYERS PLANETS 0)
+(big-bang (GameState #false 0 PLAYERS PLANETS)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
