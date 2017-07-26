@@ -28,7 +28,7 @@
 )
 
 (define (nameAndID id)
-    (string-append (_resolvePlayername id) "(" id ")")
+    (string-append "[" (_resolvePlayername id) "] ")
 )
 
 (define (_PlayerShoot id degree)

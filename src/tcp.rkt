@@ -20,7 +20,7 @@
 
 (define (loop id in out)
     (define (LoopTask ClientInput id in out)
-        (dln (string-append id "==>" ClientInput))
+        (display (string-append (nameAndID id) ClientInput "\n> "))
         (cond
             [
                 (number? (string->number (getStringWithoutLineBreak ClientInput))) 
@@ -45,7 +45,7 @@
     (define ClientInput (read-line in))
     (if (equal? ClientInput eof)
         (lambda ()
-            (dln (string-append (nameAndID id) " disconnected."))
+            (dln (string-append (nameAndID id) "disconnected."))
             (dict-remove! CLIENTLIST id)
             (_removePlayer id)
             (kill-thread (current-thread))
@@ -57,7 +57,7 @@
 (define (handle in out)
     (define id (uuid-generate))
     (_addNewPlayer id)
-    (dln (string-append (nameAndID id) " connected!"))
+    (display (string-append (nameAndID id) "connected!\n> "))
     (dict-set! CLIENTLIST id out)
     (display (string-append (read-file "Welcome") "\n") out)
     (flush-output out)
@@ -79,7 +79,7 @@
     (thread (lambda ()
         (startREPL)
     ))
-    (define listener (tcp-listen port 5 #t))
+    (define listener (tcp-listen port 8 #t))
     (define (loop)
         (accept-and-handle listener)
         (loop)
@@ -97,11 +97,11 @@
         (cond
             ((port-closed? v)
                 (dict-remove! CLIENTLIST k)
-                (dln (string-append "Removed client" k "."))
+                ;(dln (string-append "Removed client" k "."))
             )
             (
-                (dln (string-append "Send message to " k "."))
-                (display (string-append message "\n") v)
+                ;(dln (string-append "Send message to " k "."))
+                (display (string-append "[Server]: " message "\n> ") v)
                 (flush-output v)
             )
         )
