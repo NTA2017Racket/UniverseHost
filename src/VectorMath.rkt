@@ -2,7 +2,7 @@
 
 (require "Struct.rkt")
 
-(provide vector-add vector-sub vector-sum vector-div vector-length vector-min vector-max)
+(provide vector-add vector-sub vector-sum vector-div vector-mul vector-length vector-min vector-max)
 
 (define (vector-add a b)
     (Vector2D (+ (Vector2D-x a) (Vector2D-x b)) (+ (Vector2D-y a) (Vector2D-y b)))
@@ -18,6 +18,10 @@
 
 (define (vector-div a b)
     (Vector2D (/ (Vector2D-x a) b) (/ (Vector2D-y a) b))
+)
+
+(define (vector-mul a b)
+    (Vector2D (* (Vector2D-x a) b) (* (Vector2D-y a) b))
 )
 
 (define (vector-length a)
