@@ -119,6 +119,12 @@
     (dict-ref players id)
 )
 
+(define (create-projectile ev)
+    (define pl (dict-ref players (TcpEvent-uuid ev)))
+    (dict-set! players (TcpEvent-uuid ev) (struct-copy Player pl
+    (energy (- (Player-energy pl) 30))))
+    (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (Vector2D 0 0) (calc-velocity (TcpEvent-data ev)) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+)
 
 (define (handle-events state)
     (define events (getLatestEvent))
@@ -137,7 +143,7 @@
                 )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
-                (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (Vector2D 0 0) (calc-velocity (TcpEvent-data ev)) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+                (create-projectile ev)
             )
         )
     )
