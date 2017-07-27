@@ -9,4 +9,5 @@
 * Draw players (OK)
 
 # TODO APP
-* Remove spaces
+* Remove spaces in usernames
+* Save Data
