@@ -142,7 +142,7 @@
 
 (define (sendToPlayer id message)
     (define oo (dict-ref CLIENTLIST id))
-    (if (equal? (port-closed?) #f)
+    (if (equal? (port-closed? oo) #f)
         (lambda ()
             (display (string-append "[Server]: " message "\n> ") oo)
             (flush-output oo)
