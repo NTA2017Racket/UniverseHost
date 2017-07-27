@@ -140,6 +140,20 @@
     ))
 )
 
+(define (sendToPlayer id message)
+    (define oo (dict-ref CLIENTLIST id))
+    (if (equal? (port-closed?) #f)
+        (lambda ()
+            (display (string-append "[Server]: " message "\n> ") oo)
+            (flush-output oo)
+        )
+        (lambda ()
+            (dict-remove! CLIENTLIST id)
+            (_removePlayer id)
+        )
+    )
+)
+
 ;(define (startREPL)
 ;    (define (replLoop)
 ;        (define input (readline "> "))
@@ -158,5 +172,5 @@
     (thread )
 )
 
-(provide serve broadcast start-server)
+(provide serve broadcast start-server sendToPlayer)
 
