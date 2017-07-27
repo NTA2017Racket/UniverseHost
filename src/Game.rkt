@@ -87,7 +87,7 @@
 )
 
 (define (add-energy-frame)
-    (set! players (add-energy))
+    (set! players (add-energy players))
 )
 
 (define (add-player pl)
@@ -268,6 +268,7 @@ projectiles)
     (update state)
     ;(handle-events state)
     (update-physics (GameState-planets state))
+    (add-energy-frame)
     (struct-copy
         GameState
         state
