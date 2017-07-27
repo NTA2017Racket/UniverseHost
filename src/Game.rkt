@@ -31,14 +31,14 @@
 )
 
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")
-(Projectile 3 (Vector2D 400 420) (Vector2D 00 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
-(Projectile 1 (Vector2D 30 220) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 400 440) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 300 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 10 20) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 700 400) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 350 140) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 600 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
+(Projectile 3 (Vector2D 400 420) (Vector2D 10 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
+(Projectile 1 (Vector2D 30 220) (Vector2D 10 0) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 400 440) (Vector2D 0 15) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 300 40) (Vector2D 8 0) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 10 20) (Vector2D 0 4) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 700 400) (Vector2D 5 5) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 350 140) (Vector2D 0 10) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 600 40) (Vector2D 10 10) (Vector2D 0 0) #true "white")
 (Projectile 1 (Vector2D 300 90) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 ))
 
@@ -47,12 +47,17 @@
 
 (define projectiles PROJ)
 (define players (make-hash))
+;(dict-set! players 1 (Player 1 "Guy" (Vector2D 400 400) 10 "green"))
 
 ; Render parts of screen
 ; Render parts of screen
 
 (define (random-position)
     (Vector2D (random 100 600) (random 100 800))
+)
+
+(define (get-player-color)
+    (list-ref COLORLIST (dict-count players))
 )
 
 (define (render-player-hud pl)
@@ -79,6 +84,10 @@
         20
         (Player-color pl)
     )
+)
+
+(define (render-player p)
+    (star 7 "solid" (Player-color p))
 )
 
 (define (add-projectile pr)
@@ -122,7 +131,7 @@
         (cond
             ((equal? (TcpEvent-type ev) PLAYERJOINED)
                 (writeln "Player connected")
-                (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (random-position) 0 "red")))
+                (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (random-position) 0 (get-player-color))))
             ((equal? (TcpEvent-type ev) PLAYERLEFT)
                 (remove-player (player-from-id (TcpEvent-uuid ev)))
             )
@@ -133,8 +142,7 @@
                 )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
-                (writeln "Shots fired")
-                (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+                (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (Vector2D 0 0) (calc-velocity (TcpEvent-data ev)) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
             )
         )
     )
@@ -181,6 +189,13 @@
                 "white"
                 )
             ) 
+            (map 
+                (lambda
+                    (p)
+                    (render-player p)
+                )
+                (dict-values players)
+            )
             (map
                 (lambda
                     (pl)
@@ -210,9 +225,12 @@
             (map
                 (lambda
                     (p)
-                    (make-posn (+ (* (- (Player-id p) 1 200) 100)) 600)
+                    (convert-posn (Player-pos p))
                 )
                 (dict-values players)
+            )
+            (for/list ((i (in-range (dict-count players))))
+                (make-posn (+ (* i 120) 100) 600)
             ) 
             (map
                 (lambda
