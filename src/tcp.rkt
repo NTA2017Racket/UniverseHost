@@ -91,7 +91,7 @@
     (_addNewPlayer id)
     (display (string-append (nameAndID id) "connected!\n> "))
     (dict-set! CLIENTLIST id out)
-    (display (string-append (read-file "Welcome") "\n") out)
+    (display (string-append (read-file "src/Welcome.txt") "\n") out)
     (flush-output out)
     (display "> " out)
     (flush-output out)

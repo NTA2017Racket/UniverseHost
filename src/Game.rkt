@@ -4,6 +4,7 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 (require lang/posn)
+(require racket/dict)
 
 ; import other modules
 (require "Struct.rkt")
@@ -30,14 +31,14 @@
 )
 
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")
-(Projectile 3 (Vector2D 400 420) (Vector2D 00 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
-(Projectile 1 (Vector2D 30 220) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 400 440) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 300 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 10 20) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 700 400) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 350 140) (Vector2D 0 0) (Vector2D 0 0) #true "white")
-(Projectile 1 (Vector2D 600 40) (Vector2D 0 0) (Vector2D 0 0) #true "white")
+(Projectile 3 (Vector2D 400 420) (Vector2D 10 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
+(Projectile 1 (Vector2D 30 220) (Vector2D 10 0) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 400 440) (Vector2D 0 15) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 300 40) (Vector2D 8 0) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 10 20) (Vector2D 0 4) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 700 400) (Vector2D 5 5) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 350 140) (Vector2D 0 10) (Vector2D 0 0) #true "white")
+(Projectile 1 (Vector2D 600 40) (Vector2D 10 10) (Vector2D 0 0) #true "white")
 (Projectile 1 (Vector2D 300 90) (Vector2D 0 0) (Vector2D 0 0) #true "white")
 ))
 
@@ -46,10 +47,19 @@
 
 (define projectiles PROJ)
 (define players (make-hash))
+;(dict-set! players 1 (Player 1 "Guy" (Vector2D 400 400) 10 "green"))
 
-(dict-set! players 1 (Player 1 "Tester" (Vector2D 10 10) 0 "blue"))
 ; Render parts of screen
 ; Render parts of screen
+
+(define (random-position)
+    (Vector2D (random 100 600) (random 100 800))
+)
+
+(define (get-player-color)
+    (list-ref COLORLIST (dict-count players))
+)
+
 (define (render-player-hud pl)
     (define str 
         (number->string
@@ -76,6 +86,10 @@
     )
 )
 
+(define (render-player p)
+    (star 7 "solid" (Player-color p))
+)
+
 (define (add-projectile pr)
     (set! projectiles (append projectiles (list pr)))
 )
@@ -86,13 +100,14 @@
 
 (define (add-energy-frame)
     (for-each (lambda (p) (
-        (dict-set! players (Player-id p) (struct-copy Player p
+        dict-set! players (Player-id p) (struct-copy Player p
         (energy (+ (Player-energy p) 0.2))
-        ))
-    )) players)
+        )
+    )) (dict-values players))
 )
 
 (define (add-player pl)
+    (writeln "add-player")
     (dict-set! players (Player-id pl) pl)
 )
 
@@ -104,32 +119,43 @@
     (dict-ref players id)
 )
 
-(define (calc-velocity angle)
-    (define xv (sin angle))
-    (define yv (cos angle))
-    (Vector2D xv yv)
+(define (make-projectile ev)
+
+    (define pl (dict-ref players (TcpEvent-uuid ev)))
+    (dict-set! players (TcpEvent-uuid ev) (struct-copy Player pl
+    (energy (- (Player-energy pl) 30))))
+    (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (Vector2D 0 0) (calc-velocity (TcpEvent-data ev)) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+    
+)
+
+(define (create-projectile ev)
+    (define pl (dict-ref players (TcpEvent-uuid ev)))
+    (if (< 0 (- (Player-energy pl) 30))(make-projectile ev)(broadcast "Energy depleted"))
 )
 
 (define (handle-events state)
     (define events (getLatestEvent))
-    (for-each (lambda (ev) (
+    (for-each (lambda (ev) 
         (cond
             ((equal? (TcpEvent-type ev) PLAYERJOINED)
-            (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (position-player) 0 "red")))
+                (writeln "Player connected")
+                (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (random-position) 0 (get-player-color))))
             ((equal? (TcpEvent-type ev) PLAYERLEFT)
                 (remove-player (player-from-id (TcpEvent-uuid ev)))
             )
-                ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
-                (list-set players (index-of (player-from-id (TcpEvent-uuid ev)))
+            ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
+                (writeln "Player changed name")
+                (dict-set! players (TcpEvent-uuid ev)
                 (struct-copy Player (player-from-id (TcpEvent-uuid ev)) (name (TcpEvent-data ev)))
-                ))
+                )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
-                (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+                (create-projectile ev)
             )
         )
-    ))
+    )
     events)
+)
 
 
 (define (render-counter num col)
@@ -157,7 +183,7 @@
 )
 
 (define (render-projectile proj)
-    (circle 5 "solid" (Projectile-color proj))
+    (circle 3 "solid" (Projectile-color proj))
 )
 
 ; Render main function
@@ -171,12 +197,19 @@
                 "white"
                 )
             ) 
-            (dict-map
+            (map 
+                (lambda
+                    (p)
+                    (render-player p)
+                )
+                (dict-values players)
+            )
+            (map
                 (lambda
                     (pl)
                     (render-player-hud pl)
                 )
-                players
+                (dict-values players)
             )
             (map 
                 (lambda 
@@ -197,14 +230,17 @@
             (list 
                 (make-posn 50 50)
             )
-            (dict-map
+            (map
                 (lambda
                     (p)
-                    (make-posn (+ (* (index-of players p) 200) 100) 600)
+                    (convert-posn (Player-pos p))
                 )
-                players
+                (dict-values players)
+            )
+            (for/list ((i (in-range (dict-count players))))
+                (make-posn (+ (* i 120) 100) 600)
             ) 
-            (map 
+            (map
                 (lambda
                     (p)
                     (convert-posn
@@ -268,7 +304,7 @@ projectiles)
 
 (define 
     (update state)
-    ;(handle-events state)
+    (handle-events state)
     (update-physics (GameState-planets state))
     (add-energy-frame)
     (struct-copy
