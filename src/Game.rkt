@@ -87,9 +87,9 @@
 
 (define (add-energy-frame)
     (for-each (lambda (p) (
-        (dict-set! players (Player-id p) (struct-copy Player p
+        dict-set! players (Player-id p) (struct-copy Player p
         (energy (+ (Player-energy p) 0.2))
-        ))
+        )
     )) (dict-values players))
 )
 
@@ -206,7 +206,7 @@
                 )
                 (dict-values players)
             ) 
-            (map 
+            (map
                 (lambda
                     (p)
                     (convert-posn
