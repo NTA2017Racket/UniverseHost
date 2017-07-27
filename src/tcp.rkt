@@ -124,8 +124,6 @@
     ))
 )
 
-(start-server)
-
 ;(define (startREPL)
 ;    (define (replLoop)
 ;        (define input (readline "> "))
