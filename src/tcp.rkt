@@ -142,7 +142,19 @@
 
 (define (sendToPlayer id message)
     (define oo (dict-ref CLIENTLIST id))
-    (if (port-closed? oo)
+    (cond
+        [
+            (port-closed? oo)
+            (dict-remove! CLIENTLIST id)
+            (_removePlayer id)
+        ]
+        [
+            (display (string-append "[Server]: " message "\n> ") oo)
+            (flush-output oo)
+        ]
+    )
+
+    #;(if (port-closed? oo)
         (
             (dict-remove! CLIENTLIST id)
             (_removePlayer id)
