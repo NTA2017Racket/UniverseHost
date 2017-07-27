@@ -38,16 +38,32 @@
                 (SendThePlayerASyntaxError)
             )
         )
+        (define (ListPlayers)
+            (define index 1)
+            (dict-for-each (getAllPlayer) (lambda (k v)
+                (display (string-append (number->string index) ". " v "\n") out)
+                (set! index (+ index 1))
+            ))
+        )
         (cond
             [
                 (number? (string->number (getStringWithoutLineBreak ClientInput))) 
+                (display (string-append (nameAndID id) "fired with " ClientInput "\n"))
                 (_PlayerShoot id (string->number (getStringWithoutLineBreak ClientInput)))
+                (display (string-append (nameAndID id) "Successfully fired event!"  "\n> "))
             ]
             [
                 (> (string-length ClientInput) 0)
-                (if (equal? (string-ref ClientInput 0) #\c)
-                    (IHATETHISSHIT)
-                    (display (string-append (nameAndID id) ClientInput "\n> "))
+                (cond
+                    [
+                        (equal? (string-ref ClientInput 0) #\c)
+                        (IHATETHISSHIT)
+                        (display (string-append (nameAndID id) ClientInput "\n> "))
+                    ]
+                    [
+                        (equal? (string-ref ClientInput 0) #\l)
+                        (ListPlayers)
+                    ]
                 )
             ]
             (else
@@ -138,4 +154,9 @@
     (display (string-append message "\n"))
 )
 
+(define (start)
+    (thread )
+)
+
 (provide serve broadcast start-server)
+

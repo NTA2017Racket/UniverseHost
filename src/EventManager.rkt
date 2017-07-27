@@ -31,6 +31,10 @@
     (string-append "[" (_resolvePlayername id) "] ")
 )
 
+(define (getAllPlayer)
+    CLIENTNAMELIST
+)
+
 (define (_PlayerShoot id degree)
     (set! _EVENTS (append _EVENTS (list (TcpEvent PLAYERSHOOT id degree))))
 )
@@ -41,4 +45,4 @@
     tempList
 )
 
-(provide getLatestEvent nameAndID _PlayerShoot _resolvePlayername CLIENTLIST _addNewPlayer _removePlayer _PlayerHasChangedName)
+(provide getLatestEvent nameAndID _PlayerShoot _resolvePlayername CLIENTLIST _addNewPlayer _removePlayer _PlayerHasChangedName getAllPlayer)
