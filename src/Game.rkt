@@ -52,14 +52,14 @@
 ; Render parts of screen
 
 (define (random-position)
-    (Vector2D (random 50 625) (random 50 1150))
+    (Vector2D (random 100 600) (random 100 800))
 )
 
 (define (render-player-hud pl)
     (define str 
         (number->string
             (round
-                10
+                (Player-energy pl)
             )
         )
     )
@@ -98,6 +98,7 @@
 )
 
 (define (add-player pl)
+    (writeln "add-player")
     (dict-set! players (Player-id pl) pl)
 )
 
@@ -132,6 +133,7 @@
                 )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
+                (writeln "Shots fired")
                 (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
             )
         )
@@ -165,7 +167,7 @@
 )
 
 (define (render-projectile proj)
-    (circle 5 "solid" (Projectile-color proj))
+    (circle 3 "solid" (Projectile-color proj))
 )
 
 ; Render main function
