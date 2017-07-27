@@ -119,11 +119,6 @@
     (dict-ref players id)
 )
 
-(define (calc-velocity angle)
-    (define xv (sin angle))
-    (define yv (cos angle))
-    (Vector2D xv yv)
-)
 
 (define (handle-events state)
     (define events (getLatestEvent))

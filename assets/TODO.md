@@ -1,12 +1,12 @@
 # TODO UNIVERSE HOST
 
 - [ ] Invisible Planets
-- [x] Player gui (OK)
+- [x] Player gui
 - [ ] Player spawn
-- [x] Player color (OK)
-- [ ] Projectile angle
+- [x] Player color
+- [x] Projectile angle
 - [ ] Energy costs
-- [x] Draw players (OK)
+- [x] Draw players
 
 # TODO APP
 - [ ] Remove spaces in usernames

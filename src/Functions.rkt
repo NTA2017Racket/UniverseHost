@@ -8,7 +8,14 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide getStringWithoutLineBreak convert-posn get-object-texture add-energy position-player)
+(provide getStringWithoutLineBreak convert-posn get-object-texture add-energy position-player calc-velocity)
+
+(define (calc-velocity angle)
+    (define ra (* angle 0.00555555555 pi))
+    (define xv (sin ra))
+    (define yv (* (cos ra) -1))
+    (Vector2D xv yv)
+)
 
 (define (convert-posn pos)
     (make-posn 
