@@ -62,15 +62,15 @@
         (string-append
             (Player-name pl)
             ": "
-           (substring 
+                (substring
                 str
                 0
                 (- 
                     (string-length str)
                     2
                 )
+                )
            )
-        )
         20
         (Player-color pl)
     )
@@ -235,7 +235,7 @@ projectiles)
     )
 )
 
-(start-server)
+(thread (lambda () (start-server)))
 
 (big-bang (GameState #false 0 PLAYERS PLANETS)
     (to-draw render)
