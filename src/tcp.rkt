@@ -142,7 +142,7 @@
 
 (define (sendToPlayer id message)
     (define oo (dict-ref CLIENTLIST id))
-    (if (port-closed? oo))
+    (if (port-closed? oo)
         (
             (dict-remove! CLIENTLIST id)
             (_removePlayer id)

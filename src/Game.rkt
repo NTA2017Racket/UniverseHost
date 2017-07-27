@@ -130,7 +130,7 @@
 
 (define (create-projectile ev)
     (define pl (dict-ref players (TcpEvent-uuid ev)))
-    (if (< 0 (- (Player-energy pl) 30))(make-projectile ev)(broadcast "Energy depleted"))
+    (if (< 0 (- (Player-energy pl) 30))(make-projectile ev)(sendToPlayer (TcpEvent-uuid ev) "Energy depleted"))
 )
 
 (define (handle-events state)
