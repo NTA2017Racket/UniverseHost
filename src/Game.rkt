@@ -48,9 +48,13 @@
 (define projectiles PROJ)
 (define players (make-hash))
 
-(dict-set! players 1 (Player 1 "Tester" (Vector2D 10 10) 0 "blue"))
 ; Render parts of screen
 ; Render parts of screen
+
+(define (random-position)
+    (Vector2D (random 50 625) (random 50 1150))
+)
+
 (define (render-player-hud pl)
     (define str 
         (number->string
@@ -113,15 +117,17 @@
 
 (define (handle-events state)
     (define events (getLatestEvent))
-    (for-each (lambda (ev) (
+    (for-each (lambda (ev) 
         (cond
             ((equal? (TcpEvent-type ev) PLAYERJOINED)
-            (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (position-player) 0 "red")))
+                (writeln "Player connected")
+                (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (random-position) 0 "red")))
             ((equal? (TcpEvent-type ev) PLAYERLEFT)
                 (remove-player (player-from-id (TcpEvent-uuid ev)))
             )
-                ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
-                (dict-set! players (TcpEvent-uuid)
+            ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
+                (writeln "Player changed name")
+                (dict-set! players (TcpEvent-uuid ev)
                 (struct-copy Player (player-from-id (TcpEvent-uuid ev)) (name (TcpEvent-data ev)))
                 )
             )
@@ -129,7 +135,7 @@
                 (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
             )
         )
-    ))
+    )
     events)
 )
 
@@ -270,7 +276,7 @@ projectiles)
 
 (define 
     (update state)
-    ;(handle-events state)
+    (handle-events state)
     (update-physics (GameState-planets state))
     (add-energy-frame)
     (struct-copy
