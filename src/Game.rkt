@@ -12,6 +12,8 @@
 (require "Functions.rkt")
 (require "VectorMath.rkt")
 (require "tcp.rkt")
+(require "TCPEvents.rkt")
+(require "EventManager.rkt")
 
 ; defines temporary variables. Should be moved.
 
@@ -47,7 +49,7 @@
 ; global vars
 
 (define projectiles PROJ)
-
+(define players PLAYERS)
 ; Render parts of screen
 ; Render parts of screen
 (define (render-player-hud pl)
@@ -82,6 +84,44 @@
 
 (define (remove-projectile pr)
     (set! projectiles (remove (list pr) projectiles))
+)
+
+(define (add-energy)
+    (set! players (for-list ((i players))
+        (struct-copy Player i (energy (PLayer-energy i)))
+    )
+)
+
+(define (add-player pl)
+    (set! players (append players (list pl)))
+)
+
+(define (remove-player pl)
+    (set! players (remove (list pl) players))
+)
+
+(define (player-from-id id)
+    ""
+)
+
+(define (handle-events state)
+    (define events (getLatestEvent))
+    (for-each (lambda (ev) (
+        (cond
+            ((equal? (TcpEvent-type ev) PLAYERJOINED)
+            (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (position-player) 0 "red")))
+            ((equal? (TcpEvent-type ev) PLAYERLEFT)
+            (remove-player (player-from-id (TcpEvent-uuid ev)))
+            )
+            ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
+            (define affected (player-from-id (TcpEvent-uuid ev)))
+            (list-set players (index-of affected)
+            (struct-copy Player affected (name (TcpEvent-data ev)))
+            ))
+            )
+        )
+    ))
+    events)
 )
 
 (define (render-counter num col)
@@ -220,6 +260,7 @@ projectiles)
 
 (define 
     (update state)
+    ;(handle-events state)
     (update-physics (GameState-planets state))
     (struct-copy
         GameState
@@ -237,7 +278,7 @@ projectiles)
 
 (thread (lambda () (start-server)))
 
-(big-bang (GameState #false 0 PLAYERS PLANETS)
+(big-bang (GameState #false 0 PLANETS)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
