@@ -4,6 +4,7 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 (require lang/posn)
+(require racket/dict)
 
 ; import other modules
 (require "Struct.rkt")
@@ -54,7 +55,7 @@
     (define str 
         (number->string
             (round
-                (Player-energy pl)
+                10
             )
         )
     )
@@ -89,7 +90,7 @@
         (dict-set! players (Player-id p) (struct-copy Player p
         (energy (+ (Player-energy p) 0.2))
         ))
-    )) players)
+    )) (dict-values players))
 )
 
 (define (add-player pl)
@@ -120,9 +121,9 @@
                 (remove-player (player-from-id (TcpEvent-uuid ev)))
             )
                 ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
-                (list-set players (index-of (player-from-id (TcpEvent-uuid ev)))
+                (dict-set! players (TcpEvent-uuid)
                 (struct-copy Player (player-from-id (TcpEvent-uuid ev)) (name (TcpEvent-data ev)))
-                ))
+                )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
                 (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
@@ -130,6 +131,7 @@
         )
     ))
     events)
+)
 
 
 (define (render-counter num col)
@@ -171,12 +173,12 @@
                 "white"
                 )
             ) 
-            (dict-map
+            (map
                 (lambda
                     (pl)
                     (render-player-hud pl)
                 )
-                players
+                (dict-values players)
             )
             (map 
                 (lambda 
@@ -197,12 +199,12 @@
             (list 
                 (make-posn 50 50)
             )
-            (dict-map
+            (map
                 (lambda
                     (p)
-                    (make-posn (+ (* (index-of players p) 200) 100) 600)
+                    (make-posn (+ (* (- (Player-id p) 1 200) 100)) 600)
                 )
-                players
+                (dict-values players)
             ) 
             (map 
                 (lambda
