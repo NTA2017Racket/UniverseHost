@@ -12,6 +12,8 @@
 (require "Functions.rkt")
 (require "VectorMath.rkt")
 (require "tcp.rkt")
+(require "TCPEvents.rkt")
+(require "EventManager.rkt")
 
 ; defines temporary variables. Should be moved.
 
@@ -25,10 +27,6 @@
 
 (define PLANETS 
     (generate-planets 10)
-)
-
-(define PLAYERS
-    (list (Player 1 "Karl" (position-player PLANETS) 10 "red") (Player 2 "Dennis" (position-player PLANETS) 10 "green") (Player 3 "Ronald" (position-player PLANETS) 20 "white"))
 )
 
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")
@@ -47,7 +45,9 @@
 ; global vars
 
 (define projectiles PROJ)
+(define players (make-hash))
 
+(dict-set! players 1 (Player 1 "Tester" (Vector2D 10 10) 0 "blue"))
 ; Render parts of screen
 ; Render parts of screen
 (define (render-player-hud pl)
@@ -83,6 +83,54 @@
 (define (remove-projectile pr)
     (set! projectiles (remove (list pr) projectiles))
 )
+
+(define (add-energy-frame)
+    (for-each (lambda (p) (
+        (dict-set! players (Player-id p) (struct-copy Player p
+        (energy (+ (Player-energy p) 0.2))
+        ))
+    )) players)
+)
+
+(define (add-player pl)
+    (dict-set! players (Player-id pl) pl)
+)
+
+(define (remove-player pl)
+    (dict-remove! players (Player-id pl))
+)
+
+(define (player-from-id id)
+    (dict-ref players id)
+)
+
+(define (calc-velocity angle)
+    (define xv (sin angle))
+    (define yv (cos angle))
+    (Vector2D xv yv)
+)
+
+(define (handle-events state)
+    (define events (getLatestEvent))
+    (for-each (lambda (ev) (
+        (cond
+            ((equal? (TcpEvent-type ev) PLAYERJOINED)
+            (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (position-player) 0 "red")))
+            ((equal? (TcpEvent-type ev) PLAYERLEFT)
+                (remove-player (player-from-id (TcpEvent-uuid ev)))
+            )
+                ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
+                (list-set players (index-of (player-from-id (TcpEvent-uuid ev)))
+                (struct-copy Player (player-from-id (TcpEvent-uuid ev)) (name (TcpEvent-data ev)))
+                ))
+            )
+            ((equal? (TcpEvent-type ev) PLAYERSHOOT)
+                (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (calc-velocity (TcpEvent-data ev)) (Vector2D 0 0) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+            )
+        )
+    ))
+    events)
+
 
 (define (render-counter num col)
     (define str 
@@ -123,12 +171,12 @@
                 "white"
                 )
             ) 
-            (map
+            (dict-map
                 (lambda
                     (pl)
                     (render-player-hud pl)
                 )
-                (GameState-players state)
+                players
             )
             (map 
                 (lambda 
@@ -149,12 +197,12 @@
             (list 
                 (make-posn 50 50)
             )
-            (map
+            (dict-map
                 (lambda
                     (p)
-                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                    (make-posn (+ (* (index-of players p) 200) 100) 600)
                 )
-                (GameState-players state)
+                players
             ) 
             (map 
                 (lambda
@@ -220,7 +268,9 @@ projectiles)
 
 (define 
     (update state)
+    ;(handle-events state)
     (update-physics (GameState-planets state))
+    (add-energy-frame)
     (struct-copy
         GameState
         state
@@ -229,15 +279,12 @@ projectiles)
                 (GameState-time state) 
             1)
         )
-        (players
-            (add-energy (GameState-players state))
-        )
     )
 )
 
 (thread (lambda () (start-server)))
 
-(big-bang (GameState #false 0 PLAYERS PLANETS)
+(big-bang (GameState #false 0 PLANETS)
     (to-draw render)
     (on-key key-press)
     (on-tick update)
