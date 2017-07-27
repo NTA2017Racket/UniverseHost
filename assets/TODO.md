@@ -7,4 +7,4 @@
 * Projectile angle
 
 # TODO APP
-* Remove spaces
+* Remove spaces in usernames
