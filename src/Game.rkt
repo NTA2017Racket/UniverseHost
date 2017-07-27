@@ -29,10 +29,6 @@
     (generate-planets 10)
 )
 
-(define PLAYERS
-    (list (Player 1 "Karl" (position-player PLANETS) 10 "red") (Player 2 "Dennis" (position-player PLANETS) 10 "green") (Player 3 "Ronald" (position-player PLANETS) 20 "white"))
-)
-
 (define PROJ (list (Projectile 1 (Vector2D 200 200) (Vector2D 0 0) (Vector2D 0 0) #true "red") (Projectile 2 (Vector2D 400 200) (Vector2D 0 0) (Vector2D 0 0) #true "green")
 (Projectile 3 (Vector2D 400 420) (Vector2D 00 0) (Vector2D 0 0) #true "blue") (Projectile 2 (Vector2D 100 420) (Vector2D 0 0) (Vector2D 0 0) #true "yellow")
 (Projectile 1 (Vector2D 30 220) (Vector2D 0 0) (Vector2D 0 0) #true "white")
@@ -49,7 +45,9 @@
 ; global vars
 
 (define projectiles PROJ)
-(define players PLAYERS)
+(define players (make-hash))
+
+(dict-set! players 1 (Player 1 "Tester" (Vector2D 10 10) 0 "blue"))
 ; Render parts of screen
 ; Render parts of screen
 (define (render-player-hud pl)
@@ -87,19 +85,23 @@
 )
 
 (define (add-energy-frame)
-    (set! players (add-energy players))
+    (for-each (lambda (p) (
+        (dict-set! players (Player-id p) (struct-copy Player p
+        (energy (+ (Player-energy p) 0.2))
+        ))
+    )) players)
 )
 
 (define (add-player pl)
-    (set! players (append players (list pl)))
+    (dict-set! players (Player-id pl) pl)
 )
 
 (define (remove-player pl)
-    (set! players (remove (list pl) players))
+    (dict-remove! players (Player-id pl))
 )
 
 (define (player-from-id id)
-    ""
+    (dict-ref players id)
 )
 
 (define (calc-velocity angle)
@@ -169,7 +171,7 @@
                 "white"
                 )
             ) 
-            (map
+            (dict-map
                 (lambda
                     (pl)
                     (render-player-hud pl)
@@ -195,7 +197,7 @@
             (list 
                 (make-posn 50 50)
             )
-            (map
+            (dict-map
                 (lambda
                     (p)
                     (make-posn (+ (* (index-of players p) 200) 100) 600)
