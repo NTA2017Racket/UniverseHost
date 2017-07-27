@@ -8,20 +8,7 @@
 (require "Struct.rkt")
 (require "Constants.rkt")
 
-(provide getStringWithoutLineBreak add-player convert-posn get-object-texture add-energy position-player)
-
-(define (add-player state player)
-    (struct-copy 
-        GameState 
-        state 
-        (players 
-            (append 
-                (GameState-players state)
-                player
-            )
-        )
-    )
-)
+(provide getStringWithoutLineBreak convert-posn get-object-texture add-energy position-player)
 
 (define (convert-posn pos)
     (make-posn 

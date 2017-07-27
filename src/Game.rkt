@@ -86,10 +86,8 @@
     (set! projectiles (remove (list pr) projectiles))
 )
 
-(define (add-energy)
-    (set! players (for-list ((i players))
-        (struct-copy Player i (energy (PLayer-energy i)))
-    )
+(define (add-energy-frame)
+    (set! players (add-energy))
 )
 
 (define (add-player pl)
@@ -122,7 +120,7 @@
         )
     ))
     events)
-)
+
 
 (define (render-counter num col)
     (define str 
@@ -168,7 +166,7 @@
                     (pl)
                     (render-player-hud pl)
                 )
-                (GameState-players state)
+                players
             )
             (map 
                 (lambda 
@@ -192,9 +190,9 @@
             (map
                 (lambda
                     (p)
-                    (make-posn (+ (* (index-of (GameState-players state) p) 200) 100) 600)
+                    (make-posn (+ (* (index-of players p) 200) 100) 600)
                 )
-                (GameState-players state)
+                players
             ) 
             (map 
                 (lambda
@@ -269,9 +267,6 @@ projectiles)
             (+
                 (GameState-time state) 
             1)
-        )
-        (players
-            (add-energy (GameState-players state))
         )
     )
 )
