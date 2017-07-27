@@ -119,11 +119,18 @@
     (dict-ref players id)
 )
 
-(define (create-projectile ev)
+(define (make-projectile ev)
+
     (define pl (dict-ref players (TcpEvent-uuid ev)))
     (dict-set! players (TcpEvent-uuid ev) (struct-copy Player pl
     (energy (- (Player-energy pl) 30))))
     (add-projectile (Projectile (TcpEvent-uuid ev) (Player-pos (player-from-id (TcpEvent-uuid ev))) (Vector2D 0 0) (calc-velocity (TcpEvent-data ev)) #f (Player-color (player-from-id (TcpEvent-uuid ev)))))
+    
+)
+
+(define (create-projectile ev)
+    (define pl (dict-ref players (TcpEvent-uuid ev)))
+    (if (< 0 (- (Player-energy pl) 30))(make-projectile ev)(broadcast "Energy depleted"))
 )
 
 (define (handle-events state)
