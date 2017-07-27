@@ -5,7 +5,6 @@
 ;libuuid
 ;parsack
 
-(require libuuid)
 (require "Struct.rkt")
 ;(require readline)
 ;(require readline/readline)
@@ -16,6 +15,7 @@
 (require 2htdp/batch-io)
 (require parsack)
 (require "Functions.rkt")
+(require "idgen.rkt")
 (require mzlib/string)
 
 (define (start-server) (serve 8080))
@@ -71,7 +71,7 @@
 )
 
 (define (handle in out)
-    (define id (uuid-generate))
+    (define id (get-new-id))
     (_addNewPlayer id)
     (display (string-append (nameAndID id) "connected!\n> "))
     (dict-set! CLIENTLIST id out)
@@ -140,4 +140,4 @@
     (display (string-append message "\n"))
 )
 
-(provide serve broadcast)
+(provide serve broadcast start-server)
