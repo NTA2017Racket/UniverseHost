@@ -12,3 +12,9 @@
 - [ ] Remove spaces in usernames
 - [ ] Save Data
 - [ ] Check if Connected and do not crash
+
+# TODO IOS APP
+- [ ] Add controls
+- [ ] Save data
+- [ ] Optimization
+- [ ] Icon
