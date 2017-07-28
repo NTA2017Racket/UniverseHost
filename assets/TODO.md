@@ -8,6 +8,7 @@
 - [ ] Energy costs
 - [x] Draw players
 
-# TODO APP
+# TODO ANDROID APP
 - [ ] Remove spaces in usernames
 - [ ] Save Data
+- [ ] Check if Connected and do not crash
