@@ -8,9 +8,9 @@
 
 ; import other modules
 (require "Struct.rkt")
+(require "Functions.rkt")
 (require "Constants.rkt")
 (require "Generator.rkt")
-(require "Functions.rkt")
 (require "VectorMath.rkt")
 (require "tcp.rkt")
 (require "TCPEvents.rkt")
@@ -28,6 +28,7 @@
 
 (define PLANETS 
     (generate-planets 10)
+    ;(list (Planet (Vector2D 200 200) 40 (render-planet 40)))
 )
 ; global vars
 
@@ -87,13 +88,13 @@
 (define (add-energy-frame)
     (for-each (lambda (p) (
         dict-set! players (Player-id p) (struct-copy Player p
-        (energy (+ (Player-energy p) 2))
+        (energy (+ (Player-energy p) 0.5))
         )
     )) (dict-values players))
 )
 
 (define (add-player pl)
-    (writeln "add-player")
+    ;(writeln "add-player")
     (dict-set! players (Player-id pl) pl)
 )
 
@@ -123,18 +124,19 @@
     (for-each (lambda (ev) 
         (cond
             ((equal? (TcpEvent-type ev) PLAYERJOINED)
-                (writeln "Player connected")
+                ;(writeln "Player connected")
                 (add-player (Player (TcpEvent-uuid ev) DEFAULTNAME (random-position) 0 (get-player-color))))
             ((equal? (TcpEvent-type ev) PLAYERLEFT)
                 (remove-player (player-from-id (TcpEvent-uuid ev)))
             )
             ((equal? (TcpEvent-type ev) PLAYERHASCHANGEDNAME)
-                (writeln "Player changed name")
+                ;(writeln "Player changed name")
                 (dict-set! players (TcpEvent-uuid ev)
                 (struct-copy Player (player-from-id (TcpEvent-uuid ev)) (name (TcpEvent-data ev)))
                 )
             )
             ((equal? (TcpEvent-type ev) PLAYERSHOOT)
+                ;(display projectiles)
                 (create-projectile ev)
             )
         )
@@ -200,7 +202,7 @@
                 (lambda 
                     (p) 
                     (Planet-image p)
-                ) 
+                )
                 (GameState-planets state)
             )
             (map
@@ -255,12 +257,14 @@
 
 (define (calculate-gravity pos planets)
     (define vm (vector-min
-        (for/list ((i planets)) (vector-sub pos (Planet-pos i)))
+        (for/list ((i planets))
+         (vector-sub (Planet-pos i) pos))
     ))
-    (ProjectileUpdate (vector-mul vm 0.0001) (< (vector-length vm) 5))
+    (define return (ProjectileUpdate (vector-mul vm 0.001) #false))
+    return
 )
 
-(define 
+(define
     (key-press state a-key)
     (if (key=? a-key "escape")
         (stop-game state)
@@ -283,6 +287,12 @@
         ))
     )
 projectiles)
+    (for-each (lambda (p)
+    (define px (Vector2D-x (Projectile-pos p)))
+    (define py (Vector2D-y (Projectile-pos p)))
+        (cond ((or (> px 1200) (< px 0)) (remove-projectile p))
+        ((or (> py 675) (< py 0)) (remove-projectile p)))
+    ) projectiles)
 )
 
 

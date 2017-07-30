@@ -8,7 +8,7 @@
 (require "Constants.rkt")
 (require "Functions.rkt")
 
-(provide generate-planets)
+(provide generate-planets render-planet)
 
 (define (render-planet rad) (scale/xy (/ rad 100) (/ rad 100) (get-object-texture rad)))
 
